@@ -8,11 +8,11 @@ export default function ErrorMessage({ message, onRetry }: Props) {
         <div>
             <p>{message}</p>
 
-            {onRetry && (
-                <button>
+            {onRetry ? 
+                <button onClick={onRetry}>
                     Retry
-                </button>
-            )}
+                </button> : null
+            }
         </div>
     );
 }

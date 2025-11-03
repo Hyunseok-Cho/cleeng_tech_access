@@ -18,8 +18,8 @@ export default function SubscriptionsList() {
 
             const data = await fetchSubscriptions();
             setItems(data);
-        } catch {
-            setError('Failed to load subscriptions. Please try again.');
+        } catch(e) {
+            setError(e instanceof Error ? e.message : 'Failed to load subscriptions.');
         } finally {
             setLoading(false);
         }
@@ -33,27 +33,35 @@ export default function SubscriptionsList() {
                 const data = await fetchSubscriptions();
                 if(!cancelled) {
                     setItems(data);
-                    setLoading(false);
                 }
-            } catch{
+            } catch (e) {
+                if (!cancelled) {
+                setError(e instanceof Error ? e.message : 'Failed to load subscriptions.');
+                }
+            } finally {
                 if(!cancelled) {
-                    setError('Failed to load subscriptions. Please try again.');
                     setLoading(false);
                 }
-            } 
+            }
         }) ();
         return () => {
             cancelled = true;
         }
     }, []);
 
+    function handleCancel(id: string) {
+        setItems((prev) => 
+            prev.map((s) => (s.id === id ? {...s, status: 'cancelled'} : s)));
+    }
+
     if(loading) return <Loading />;
     if(error) return <ErrorMessage message={error} onRetry={load} />;
+    if (items.length === 0) return <>No subscriptions found.</>;
 
     return (
         <section>
             {items.map((s) => (
-                <SubscriptionCard key={s.id} subscription={s} />
+                <SubscriptionCard key={s.id} subscription={s} onCancel={handleCancel} />
             ))}
         </section>
     );

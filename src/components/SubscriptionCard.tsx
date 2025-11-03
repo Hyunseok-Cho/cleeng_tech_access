@@ -2,6 +2,7 @@ import type { Subscription } from '@/lib/types';
 
 type Props = {
     subscription: Subscription;
+    onCancel?: (id: string) => void;
 };
 
 function formatPrice(value: number, currency: string) {
@@ -24,21 +25,32 @@ function formatDate(iso: string) {
   }).format(d);
 }
 
-export default function SubscriptionCard({ subscription }: Props) {
+export default function SubscriptionCard({ subscription, onCancel }: Props) {
     const { offerTitle, status, price, currency, nextPaymentDate } = subscription;
+    const isCancelled = status === 'cancelled';
 
     return(
         <article>
             <header>
                 <h3>{offerTitle}</h3>
 
-                <span>{status}</span>
+                <div>Status: {status}</div>
             </header>
 
             <div>
                 <div>{formatPrice(price, currency)}</div>
 
                 <div>Renews on: {formatDate(nextPaymentDate)}</div>
+            </div>
+
+            <div>
+                <button
+                onClick={() => onCancel?.(id)}
+                disabled={isCancelled}
+                aria-disabled={isCancelled}
+                >
+                {isCancelled ? 'Cancelled' : 'Cancel'}
+                </button>
             </div>
         </article>
     )
