@@ -24,7 +24,7 @@ src/
     store.ts                 # Redux store (configureStore)
   features/
     subscriptions/
-      subscriptionsSlice.ts  # Redux slice: items + cancelById
+      subscriptionsSlice.ts  # Redux slice: items(setAll) + cancelById
   api/
     subscriptions.ts        # Mock API: 1s Delay + fail/empty simulation
   components/
@@ -46,8 +46,9 @@ src/
     subscriptionsSlice.test.ts
     validation.test.ts
 App.tsx
+App.css
+index.css
 main.tsx
-
 ```
 Directory Alias: '@' -> 'src/'
 * 'vite.config.ts' -> 'resolve.alias'
