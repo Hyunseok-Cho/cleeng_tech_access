@@ -1,0 +1,188 @@
+html, body { margin: 0; padding: 0;}
+
+body {
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    line-height: 1.5;
+    color: #111;
+    background: #e8e8e8;
+}
+
+main {
+    max-width: 920px;
+    margin: 32px auto;
+    padding: 0 16px;
+}
+
+section { 
+    display: flex;
+    justify-content: center;
+    gap: 16px; 
+}
+
+article {
+  --card-bg: #ffffff;
+  --card-accent: #b592f1;
+  --card-text: #1e293b;
+  --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+
+  width: 280px;
+
+  background: var(--card-bg);
+  border-radius: 20px; 
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  border: 1px solid rgba(255, 255, 255, 0.2); 
+  border-color: #e5e7eb; 
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, sans-serif;
+    
+  padding: 1.25em; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 0.75em; 
+  text-align: center; 
+}
+article > header { margin-bottom: 0; }
+h3 {
+  color: var(--card-text);
+  font-size: 1.1em;
+  margin: 0;
+  font-weight: 700;
+}
+article > div + div { margin-top: 8px; }
+
+.status-text.status--active {
+    color: #059669; /* Tailwind CSS emerald-600 */
+    font-weight: 600; 
+    opacity: 1;
+
+    text-transform: capitalize;
+}
+
+.status-text.status--cancelled {
+    color: #dc2626;
+    font-weight: 600; 
+    opacity: 1;
+    
+    text-transform: capitalize;
+}
+
+.status-text.status--pending {
+    color: #f59e0b; 
+}
+
+.price-text { 
+    color: var(--card-text);
+    font-weight: 700;
+    font-size: 36px; 
+}
+
+article > div:nth-of-type(1) { 
+    /* article의 gap으로 간격 관리 */
+    /* text-align: center; 제거했으므로, 이 부분의 중앙 정렬이 필요하면 다시 적용해야 함 */
+}
+
+
+
+article > div:nth-of-type(1) > div:last-child {
+    /* card__description 스타일 적용 */
+    color: var(--card-text);
+    font-size: 0.75em;
+    margin: 0;
+    opacity: 0.7;
+    font-weight: 400; /* 텍스트가 설명처럼 보이도록 굵기 조정 */
+}
+
+article > div:nth-of-type(2) {
+    /* 기존 margin-top: 8px 제거. article의 gap으로 대체 */
+    margin-top: auto; /* card__footer처럼 나머지 공간을 채워서 아래로 밀어내기 */
+}
+
+article header div { color:#374151; font-size: 0.95rem; }
+
+button {
+    background: var(--card-accent);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75em; 
+    font-weight: 600;
+    
+    width: 100%; 
+    height: 36px;
+    border-radius: 8px;
+
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+button:hover { background:#7c3aed; }
+button:active { transform: translateY(1px); }
+button[disabled], button[aria-disabled="true"] {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+button:disabled {
+    background: #ccc;
+    cursor: default;
+}
+
+:focus-visible {
+  outline: 3px solid #2563eb; /* 파란 포커스 링 */
+  outline-offset: 2px;
+}
+
+[role="status"] { margin: 16px 0; color:#374151; }
+[role="alert"]  {
+  margin: 16px 0; padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #fecaca;
+  background: #fef2f2; color:#991b1b;
+}
+
+.RetryButton {
+    background: #ef4444; 
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 0.875em; 
+    font-weight: 600;
+    padding: 8px 16px;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.Loading {
+    text-align: center;
+    color: #374151;
+    margin: 16px 0;
+    font-size: 24px;
+}
+
+@media (max-width: 600px) {
+  main { margin: 20px auto; }
+  article { 
+    padding: 14px; 
+    border-radius: 10px; 
+
+    width: 100%;
+    max-width: 95%;
+    text-align: center;
+    }
+
+    section {
+        display: grid;
+        grid-template-columns: 1fr;
+        justify-content: unset;
+        gap: 12px;
+    }
+
+    .price-text {
+        font-size: 30px;
+    }
+}

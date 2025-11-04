@@ -54,11 +54,11 @@ export default function SubscriptionCard({ subscription, onCancel }: Props) {
             <header>
                 <h3>{offerTitle}</h3>
 
-                <div>Status: {status}</div>
+                <div className={`status-text status--${status}`}>Status: {status}</div>
             </header>
 
             <div>
-                <div>{formatPrice(price, currency)}</div>
+                <div className="price-text">{formatPrice(price, currency)}</div>
 
                 <div>Renews on: {formatDate(nextPaymentDate, 'pl-PL', 'Europe/Warsaw', 'numeric')}</div>
             </div>

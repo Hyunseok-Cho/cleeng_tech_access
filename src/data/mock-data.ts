@@ -19,7 +19,7 @@ export const mockSubscriptions = [
     // Add one more subscription of your choice
     {
         id: 'S54321',
-        offerTitle: 'Youtube Premium Family Monthly',
+        offerTitle: 'Youtube Premium Monthly',
         status: 'active',
         price: 59.99,
         currency: 'PLN',

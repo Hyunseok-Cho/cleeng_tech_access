@@ -1,6 +1,64 @@
 .Home {
+}
+
+.Top {
+    display: flex;
+    justify-content: space-between;
+
+    margin-bottom: 36px;
+}
+
+.Top h1 {
+    font-weight: 500;
+
+    color: #010101;
+}
+
+.UserInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    line-height: 1.0;
+}
+
+.user_profile {
+    width: 50px;
+    height: 50px;
+
+    border-radius: 50%;
+
+    border: 2px solid #fff;
+
+    box-shadow: 
+        0 0 0 1px #fff, 
+        0 0 0 2px #7c3aed, 
+        0 0 0 4px #a78bfa; 
+        
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+.user_profile:hover {
+    box-shadow: 
+        0 0 0 2px #fff,
+        0 0 0 3px #7c3aed, 
+        0 0 0 6px rgba(124, 58, 237, 0.5); 
+}
+
+.UserName {
     display: flex;
     flex-direction: column;
+    font-weight: 400;
+    margin: 0;
+}
 
-    background-color: #f5f5f5;
+.UserName p {
+    margin: 0;
+    padding: 3px;
+
+    color: #010101;
+}
+
+.FullName {
+    font-weight: 200;
+    color: #010741;
 }

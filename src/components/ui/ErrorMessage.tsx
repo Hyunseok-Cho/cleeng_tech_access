@@ -20,7 +20,7 @@ export default function ErrorMessage({ message, onRetry, autoFocusRetry }: Props
             <p>{message}</p>
 
             {onRetry ? 
-                <button ref={btnRef} onClick={onRetry}>
+                <button ref={btnRef} onClick={onRetry} className="RetryButton">
                     Retry
                 </button> : null
             }

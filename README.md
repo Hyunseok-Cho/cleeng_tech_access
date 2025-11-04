@@ -5,7 +5,7 @@ This is a single-page application fetching the Mock-data with its API and render
 ### Technical Stack:
 1. Vite + React + TypeScript
 2. State: React hooks (useState/useEffect) + Redux Toolkit slice
-3. Style: CSS (applied at the final step)
+3. Style: CSS
 4. A11y: live regions for loading/error
 
 
@@ -55,14 +55,14 @@ Directory Alias: '@' -> 'src/'
 * 'tsconfig.app.json' -> 'baseUrl' / 'Paths'
 
 ## Overview & Mapped Requirements
-1. Project Setup - Vite(React + TypeScript) | v Done
-2. Mock Data & API Simulation - Mock-data.ts, fetchSubscriptions() in 'subscriptions.ts' with 1s delay | v Done
-3. State Management - SubscriptionsList manages items/loading/error/empty, Using load(), Using built-in React hook(useState, useEffect) | v Done
-4. UI - SubscriptionsList fetches the items on first mount(useEffect with load()), Message('Loading...') rendered when it is fetched with 1s delay, Error message displayed when error occurs, mapping over the Subscription items with SubscriptionCard component and rendering when it is fetched, SubscriptionCard receives the data as props and display all | v Done
-5. Styling | x Not-yet
-6. Bonus(State Management - Redux) - Redux Toolkit slice: setAll/cancelById | v Done
-7. Bonus(Cancel Button) - Added Cancel Button for each SubscriptionCard, Updating status to cancelled, disabling the cancel button, but only persist in the client-side state | v Done
-8. Bonus(Tests - unit or end-2-end) - validation, slice | v Unit tests done
+1. [V]Project Setup - Vite(React + TypeScript)
+2. [V]Mock Data & API Simulation - Mock-data.ts, fetchSubscriptions() in 'subscriptions.ts' with 1s delay 
+3. [V]State Management - SubscriptionsList manages items/loading/error/empty, Using load(), Using built-in React hook(useState, useEffect)
+4. [V]UI - SubscriptionsList fetches the items on first mount(useEffect with load()), Message('Loading...') rendered when it is fetched with 1s delay, Error message displayed when error occurs, mapping over the Subscription items with SubscriptionCard component and rendering when it is fetched, SubscriptionCard receives the data as props and display all 
+5. [V]Styling 
+6. [V]Bonus(State Management - Redux) - Redux Toolkit slice: setAll/cancelById
+7. [V]Bonus(Cancel Button) - Added Cancel Button for each SubscriptionCard, Updating status to cancelled, disabling the cancel button, but only persist in the client-side state 
+8. [V]Bonus(Tests - unit) - validation, slice 
 
 * Only persist in the client-side state: No server/storage, restored the original mock-data when it is refreshed.
 
@@ -79,9 +79,9 @@ Directory Alias: '@' -> 'src/'
 
 ## States / Flow
 * SubscriptionsList
-  * useEffect(() => load(), []): Initially fetching.
-  * load(): Encapsulating the logic into a single load() function (loading/error/success).
-  * handleCancel(id): Updating the only item(which has 'id')'s status to 'cancelled' 
+  * `useEffect(() => load(), [])`: Initially fetching.
+  * `load()`: Encapsulating the logic into a single load() function (loading/error/success).
+  * `handleCancel(id)`: Updating the only item(which has 'id')'s status to 'cancelled' 
   * Render branches
     1. Loading: Message 'Loading...'
     2. Error: Error Message + Retry button
