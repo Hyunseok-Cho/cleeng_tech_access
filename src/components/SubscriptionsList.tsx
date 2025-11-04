@@ -1,65 +1,141 @@
-import {useEffect, useState} from 'react';
+// import {useEffect, useState} from 'react';
 
-import type {Subscription} from '@/lib/types';
-import {fetchSubscriptions} from '@/api/subscriptions';
+// import type {Subscription} from '@/lib/types';
+// import {fetchSubscriptions} from '@/api/subscriptions';
+// import { validateSubscriptions } from '@/lib/validation';
+
+// import Loading from '@/components/ui/Loading';
+// import ErrorMessage from '@/components/ui/ErrorMessage';
+// import SubscriptionCard from '@/components/SubscriptionCard';
+
+// export default function SubscriptionsList() {
+//     const [items, setItems] = useState<Subscription[]>([]);
+//     const [loading, setLoading] = useState(true);
+//     const [error, setError] = useState<string | null>(null);
+
+//     // Dev Toggle to Simulate the Error / Empty Array
+//     const DEV = {
+//         FAIL: false,
+//         EMPTY: false,
+//         BAD: false,
+//     }
+
+//     async function load() {
+//         try{
+//             setError(null);
+//             setLoading(true);
+
+//             const data = await fetchSubscriptions({
+//                 fail: DEV.FAIL,
+//                 empty: DEV.EMPTY,
+//                 bad: DEV.BAD,
+//             });
+
+//             const validData = validateSubscriptions(data);
+//             setItems(validData);
+//         } catch(e) {
+//             setError(e instanceof Error ? e.message : 'Failed to load subscriptions.');
+//         } finally {
+//             setLoading(false);
+//         }
+//     }
+
+//     // When it is mounted first time.
+//     useEffect(() => {
+//         load();
+//     }, []);
+
+//     function handleCancel(id: string) {
+//         setItems((prev) => 
+//             prev.map((s) => (s.id === id ? {...s, status: 'cancelled'} : s)));
+//     }
+
+//     if(loading) return <Loading />;
+//     if(error) return <ErrorMessage message={error} onRetry={load} autoFocusRetry/>;
+
+//     if (items.length === 0) return <div>No subscriptions found.</div>;
+
+//     return (
+//         <section>
+//             {items.map((s) => (
+//                 <SubscriptionCard key={s.id} subscription={s} onCancel={handleCancel} />
+//             ))}
+//         </section>
+//     );
+// }
+
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import SubscriptionCard from './SubscriptionCard';
+import Loading from './ui/Loading';
+import ErrorMessage from './ui/ErrorMessage';
+
+import { fetchSubscriptions } from '@/api/subscriptions';
 import { validateSubscriptions } from '@/lib/validation';
 
-import Loading from '@/components/ui/Loading';
-import ErrorMessage from '@/components/ui/ErrorMessage';
-import SubscriptionCard from '@/components/SubscriptionCard';
+import { setAll, cancelById } from '@/features/subscriptions/subscriptionsSlice';
+import type { RootState } from '@/app/store';
 
 export default function SubscriptionsList() {
-    const [items, setItems] = useState<Subscription[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+  const items = useSelector((s: RootState) => s.subscriptions.items);
+  const dispatch = useDispatch();
 
-    // Dev Toggle to Simulate the Error / Empty Array
-    const DEV = {
-        FAIL: false,
-        EMPTY: false,
-        BAD: false,
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const DEV = {
+    FAIL: false,
+    EMPTY: false,
+    BAD: false,
+    delayMs: 1000,
+  };
+
+  async function load() {
+    try {
+      setError(null);
+      setLoading(true);
+      const raw = await fetchSubscriptions({
+        fail: DEV.FAIL,
+        empty: DEV.EMPTY,
+        bad: DEV.BAD,
+        delayMs: DEV.delayMs,
+      });
+      const data = validateSubscriptions(raw);
+      
+      dispatch(setAll(data));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to load subscriptions.');
+    } finally {
+      setLoading(false);
     }
+  }
 
-    async function load() {
-        try{
-            setError(null);
-            setLoading(true);
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-            const data = await fetchSubscriptions({
-                fail: DEV.FAIL,
-                empty: DEV.EMPTY,
-                bad: DEV.BAD,
-            });
+  function handleCancel(id: string) {
+    dispatch(cancelById(id));
+  }
 
-            const validData = validateSubscriptions(data);
-            setItems(validData);
-        } catch(e) {
-            setError(e instanceof Error ? e.message : 'Failed to load subscriptions.');
-        } finally {
-            setLoading(false);
-        }
-    }
+  if (loading) return <Loading />;
+  if (error) return <ErrorMessage message={error} onRetry={load} autoFocusRetry />;
 
-    // When it is mounted first time.
-    useEffect(() => {
-        load();
-    }, []);
+  if (!items || items.length === 0) {
+    return <>No subscriptions found.</>;
+  }
 
-    function handleCancel(id: string) {
-        setItems((prev) => 
-            prev.map((s) => (s.id === id ? {...s, status: 'cancelled'} : s)));
-    }
-
-    if(loading) return <Loading />;
-    if(error) return <ErrorMessage message={error} onRetry={load} autoFocusRetry/>;
-
-    if (items.length === 0) return <div>No subscriptions found.</div>;
-
-    return (
-        <section>
-            {items.map((s) => (
-                <SubscriptionCard key={s.id} subscription={s} onCancel={handleCancel} />
-            ))}
-        </section>
-    );
+  return (
+    <section>
+      {items.map((s) => (
+        <SubscriptionCard
+          key={s.id}
+          subscription={s}
+          onCancel={handleCancel}
+        />
+      ))}
+    </section>
+  );
 }
