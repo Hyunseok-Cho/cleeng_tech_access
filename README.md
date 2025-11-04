@@ -1,12 +1,13 @@
-# Cleeng - Subscriptions React application Technical Accessment
+# Cleeng - Subscriptions React application Technical Assessment
 
-This is a single-page-application fetching the Mock-data with its API and rendering on the page. User can manage his/her subscriptions and cancel if he/she wants.
+This is a single-page application fetching the Mock-data with its API and rendering on the page. User can manage his/her subscriptions and cancel if he/she wants.
 
 ### Technical Stack:
 1. Vite + React + TypeScript
-2. Built-in React hook: useState, useEffect
-3. Style: CSS
-4. Optimization: useRedux(current plan)
+2. State: React hooks (useState/useEffect) + Redux Toolkit slice
+3. Style: CSS (applied at the final step)
+4. A11y: live regions for loading/error
+
 
 ## Quick Start
 ```bash
@@ -14,11 +15,16 @@ npm install
 
 npm run dev
 ```
-Required: Higher than Node v18 recommended.
+Requirements: Node.js ≥ 18
 
 ## Project Structure
 ```txt
 src/
+  app/
+    store.ts                 # Redux store (configureStore)
+  features/
+    subscriptions/
+      subscriptionsSlice.ts  # Redux slice: items + cancelById
   api/
     subscriptions.ts        # Mock API: 1s Delay + fail/empty simulation
   components/
@@ -36,6 +42,9 @@ src/
     Home.tsx                # Main Page
   styles/
     globals.css             # On the last step of building
+  tests/
+    subscriptionsSlice.test.ts
+    validation.test.ts
 App.tsx
 main.tsx
 
@@ -50,71 +59,87 @@ Directory Alias: '@' -> 'src/'
 3. State Management - SubscriptionsList manages items/loading/error/empty, Using load(), Using built-in React hook(useState, useEffect) | v Done
 4. UI - SubscriptionsList fetches the items on first mount(useEffect with load()), Message('Loading...') rendered when it is fetched with 1s delay, Error message displayed when error occurs, mapping over the Subscription items with SubscriptionCard component and rendering when it is fetched, SubscriptionCard receives the data as props and display all | v Done
 5. Styling | x Not-yet
-6. Bonus(State Management - Redux) | x Not-yet
+6. Bonus(State Management - Redux) - Redux Toolkit slice: setAll/cancelById | v Done
 7. Bonus(Cancel Button) - Added Cancel Button for each SubscriptionCard, Updating status to cancelled, disabling the cancel button, but only persist in the client-side state | v Done
-8. Bonus(Tests - unit or end-2-end) | x Not-yet
+8. Bonus(Tests - unit or end-2-end) - validation, slice | v Unit tests done
 
 * Only persist in the client-side state: No server/storage, restored the original mock-data when it is refreshed.
 
 ## Mock API / Simulation
-* 'src/api/subscriptions.ts
-  * Delay: 1 second delay(sleep) and respond
-  * Option:
-    * fail: boolean -> Simulation for Network Fail
-    * empty: boolean -> Simulation for Empty items in Subscriptions
-  * Protect the original template: Returning shallow Copy('map(({...s}))')
-
-  Behavior: The error keeps occuring during 'fail' is 'true' even though user clicks the button 'Retry'. However, It will fetch the data without problems after clicked 'Retry' button if user changes 'fail' to 'false'.
+* 'src/api/subscriptions.ts'
+  - Delay: 1 second (sleep) then respond
+  - Options:
+    - fail: boolean  // simulate network error
+    - empty: boolean // simulate empty list
+    - bad: boolean   // simulate corrupted payload (runtime validation error)
+    - delayMs: number (default 1000)
+  - Behavior: if `fail = true`, Retry keeps failing until you set `fail = false`.
+  - Protect original template: return shallow copy (`map(s => ({ ...s }))`)
 
 ## States / Flow
 * SubscriptionsList
   * useEffect(() => load(), []): Initially fetching.
-  * load(): Capculating the single function for Loading/Error/Successfully Fetching.
+  * load(): Encapsulating the logic into a single load() function (loading/error/success).
   * handleCancel(id): Updating the only item(which has 'id')'s status to 'cancelled' 
-  * Rendering divide spots
+  * Render branches
     1. Loading: Message 'Loading...'
     2. Error: Error Message + Retry button
     3. Successful Fetching: SubscriptionCard Mapping, Rendering
-    4. Empty items: Informing Message
+    4. Empty items: Empty state message
   * SubscriptionCard
     * Price/Date: 'Intl.NumberFormat', 'Intl.DateTimeFormat' to formatting
     * Cancel Button: Updating the status to 'cancelled'
 
-## DEV Toggle (Simulate/Verificate)
-'SubscriptionList.tsx'
+## DEV Toggle (Simulate/Verify)
 ```ts
-const DEV = {
-  FAIL: false,  
-  EMPTY: false,
-};
+// SubscriptionsList.tsx
+const DEV = { FAIL: false, EMPTY: false, BAD: false, delayMs: 1000 };
 ```
+
 * Error testing: 'FAIL=true' -> Error UI -> 'FAIL=false' & Retry -> Fetching items
 * Empty items: 'EMPTY=true' -> “No subscriptions found.” Message
 
 ## A11y
 * Notification for Status changing on the Screen Reader.
-* Able to Controlling or not: Disabling the button and labling Cancelled
-* Keyboard Controlling
+* Able to Controlling or not: Disabling the button and labeling Cancelled
+* Keyboard support
+```txt
+- Loading: <div role="status" aria-live="polite">
+- Error:   <div role="alert"> (+ Retry auto-focus)
+```
 
 ## Runtime Validation
-TypeScript only guarantees in the Complie Time.
-Wrong data can be enterred from server/outer in practical runtime, it is not validated with only types.
+TypeScript only guarantees types at compile time.
+Runtime payloads from the server can be malformed, so we validate before dispatch
 
-Where?
-After 'fetchSubscriptions()', Checking all items are satisfied with template of Subscription before 'setItem()'
+Where: After fetchSubscriptions(), before dispatch(setAll())
+If validation fails, we throw and render the Error UI
 
-How?
-If it is failed, throw the error UI.
-
-## Tests (Plan)
+## Tests(Unit)
 To guarantee the critical flow is not broken.
-* Unit
-  * Formatter: Price/Date output is done well
-  * State Update: Checking maintain immutability and change to 'cancelled' on the correct id items when 'handleCancel(id)' is called.
-  * Loading: If the cards are rendered well after the message 'Loading...'
-* E2E
-  * Enter the application -> 'Loading...' -> Cards appear
-  * First card Cancel -> Cancelled + disabled button
-  * 'FAIL=true' -> Error UI -> 'FAIL=false' -> Retry -> Fetch
+  - Unit (done): validation, slice reducers (setAll/cancelById), basic i18n formatting
+  - E2E (optional)
+  * Run:
+    ```bash
+    npm run test         # watch
+    npm run test:run     # single run
+    ```
+  * Test files:
+    - tests/*.test.ts    
 
-Test file will be located in: 'src/__tests__/*'
+* Result
+  ```bash
+  DEV  v4.0.7 /Users/hyunseokcho/Github/cleeng_tech_access
+
+  ✓ src/tests/validation.test.ts (2 tests) 7ms
+  ✓ src/tests/subscriptionsSlice.test.ts (2 tests) 9ms
+
+  Test Files  2 passed (2)
+        Tests  4 passed (4)
+    Start at  18:44:06
+    Duration  549ms (transform 126ms, setup 0ms, collect 194ms, tests 16ms, environment 0ms, prepare 16ms)
+  ```
+
+## i18n
+- Price: Intl.NumberFormat with locale by currency (USD → en-US, PLN → pl-PL, …)
+- Date: Intl.DateTimeFormat('pl-PL', { timeZone: 'Europe/Warsaw' })
