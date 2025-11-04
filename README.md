@@ -40,6 +40,7 @@ src/
     validation.ts           # Validating the data template/Type
   pages/
     Home.tsx                # Main Page
+    Home.css
   styles/
     globals.css             # On the last step of building
   tests/

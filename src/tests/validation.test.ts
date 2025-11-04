@@ -1,6 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { validateSubscriptions } from '@/lib/validation';
 
+/**
+ * Unit tests for runtime validation.
+ * - accepts valid payload
+ * - rejects unperfect payload
+ */
+
 describe('validateSubscriptions', () => {
   it('passes valid payload', () => {
     const ok = [{

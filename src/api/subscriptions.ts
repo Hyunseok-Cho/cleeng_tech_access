@@ -1,26 +1,41 @@
 import { mockSubscriptions } from '@/data/mock-data';
 import type {Subscription} from '@/lib/types';
 
+/**
+ * Artificial delay utility to simulate network latency.
+ * @param ms - Milliseconds to wait.
+ * @returns A promise that resolves after `ms`.
+ */
 const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
 
+/**
+ * Simulation flags for the mock subscriptions API.
+ * fail: Simulate a network failure.
+ * empty: Return an empty array.
+ * bad: Return a unperfect payload.
+ */
 type FetchOptions = {
     delayMs?: number;
-    fail?: boolean; // True = Error
-    empty?: boolean; // True = Empty array
-    bad?: boolean; // If it is damaged payload
+    fail?: boolean; 
+    empty?: boolean; 
+    bad?: boolean; 
 }
 
+/**
+ * Fetch subscriptions from a mock API with simulation flags.
+ *
+ * @param options - Simulation flags such as latency, failure, emptiness, and bad payload.
+ * @returns Resolved subscriptions or throws on simulated failure.
+ */
 export async function fetchSubscriptions(
     options: FetchOptions = {}
 ): Promise<Subscription[]> {
-    const { delayMs = 1000, fail = false, empty = false, bad = false} = options; // Error simulation 'fail = true'
-    // Simulate Network Delay (1 sec)
+    const { delayMs = 1000, fail = false, empty = false, bad = false} = options; 
     await sleep(delayMs);
 
     if(fail) {
         throw new Error('Network Error');
     }
-
     if(empty) {
         return [];
     }
@@ -30,8 +45,6 @@ export async function fetchSubscriptions(
     if(!bad) {
         return base as Subscription[];
     }
-
-    // Damaged Payload Simulation
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const broken: any[] = [
     ...base.slice(0, 1),
@@ -44,7 +57,6 @@ export async function fetchSubscriptions(
     },
     ...base.slice(2),
   ];
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return broken as any;
 }

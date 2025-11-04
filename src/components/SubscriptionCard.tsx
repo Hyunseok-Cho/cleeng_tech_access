@@ -1,10 +1,17 @@
 import type { Subscription } from '@/lib/types';
 
+/**
+ * Props for SubscriptionCard component(Subscription items and Cancel logic).
+ */
 type Props = {
+    /** A single subscription record to render. */
     subscription: Subscription;
     onCancel?: (id: string) => void;
 };
 
+/**
+ * Maps ISO-4217 currency codes to a default locale for price formatting.
+ */
 const localeByCurrency: Record<string, string> = {
     USD: 'en-US',
     EUR: 'de-DE',
@@ -13,15 +20,21 @@ const localeByCurrency: Record<string, string> = {
     KRW: 'ko-KR',
 }
 
+/**
+ * Format a price using `Intl.NumberFormat`.
+ * @param value - Numeric amount.
+ * @param currency - ISO-4217 currency code.
+ * @param opts.locale - Override locale (defaults to {@link localeByCurrency}).
+ * @param opts.display - Currency display style (symbol|code|narrowSymbol|name).
+ * @returns Formatted currency string.
+ * @example formatPrice(59.99, 'PLN') // → "59,99 zł" (pl-PL)
+ */
 function formatPrice(value: number, currency: string, opts?: {
     locale?: string;
     display?: 'symbol' | 'code' | 'narrowSymbol' | 'name';
 }) {
     const locale = opts?.locale ?? localeByCurrency[currency] ?? 'en-US';
 
-    //i18n number formatting - Intl.NumberFormat
-    // Intl... is a constructor, it should be 'new'.
-    // .format() method to format number to string.
     return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency,
@@ -30,6 +43,13 @@ function formatPrice(value: number, currency: string, opts?: {
   }).format(value);
 }
 
+/**
+ * Format an ISO date with explicit locale/timezone.
+ * @param iso - ISO-8601 string.
+ * @param locale - BCP47 locale (default: 'pl-PL').
+ * @param timeZone - IANA time zone (default: 'Europe/Warsaw').
+ * @param style - 'long' (e.g., 28 listopada 2025) or 'numeric' (28.11.2025).
+ */
 function formatDate(
   iso: string,
   locale: string = 'pl-PL',
@@ -45,6 +65,11 @@ function formatDate(
   return new Intl.DateTimeFormat(locale, opts).format(date);
 }
 
+/**
+ * Renders a single subscription card with formatted price/date and a Cancel button.
+ * @param props - Component props.
+ * @remarks The cancel action affects **client-side state only** (no persistence).
+ */
 export default function SubscriptionCard({ subscription, onCancel }: Props) {
     const { id, offerTitle, status, price, currency, nextPaymentDate } = subscription;
     const isCancelled = status === 'cancelled';

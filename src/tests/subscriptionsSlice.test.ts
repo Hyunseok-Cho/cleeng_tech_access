@@ -10,6 +10,11 @@ const base = [{
   nextPaymentDate: '2025-11-28T10:00:00Z',
 }];
 
+/**
+ * Unit tests for the subscriptions slice.
+ * - setAll: replaces items
+ * - cancelById: marks one item as 'cancelled'
+ */
 describe('subscriptions slice', () => {
   it('setAll replaces items', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
