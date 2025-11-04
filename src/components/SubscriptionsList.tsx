@@ -11,12 +11,21 @@ export default function SubscriptionsList() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    // Dev Toggle to Simulate the Error / Empty Array
+    const DEV = {
+        FAIL: false,
+        EMPTY: false,
+    }
+
     async function load() {
         try{
             setError(null);
             setLoading(true);
 
-            const data = await fetchSubscriptions();
+            const data = await fetchSubscriptions({
+                fail: DEV.FAIL,
+                empty: DEV.EMPTY,
+            });
             setItems(data);
         } catch(e) {
             setError(e instanceof Error ? e.message : 'Failed to load subscriptions.');
@@ -25,28 +34,9 @@ export default function SubscriptionsList() {
         }
     }
 
+    // When it is mounted first time.
     useEffect(() => {
-        let cancelled = false;
-
-        (async () => {
-            try{
-                const data = await fetchSubscriptions();
-                if(!cancelled) {
-                    setItems(data);
-                }
-            } catch (e) {
-                if (!cancelled) {
-                setError(e instanceof Error ? e.message : 'Failed to load subscriptions.');
-                }
-            } finally {
-                if(!cancelled) {
-                    setLoading(false);
-                }
-            }
-        }) ();
-        return () => {
-            cancelled = true;
-        }
+        load();
     }, []);
 
     function handleCancel(id: string) {
@@ -56,6 +46,7 @@ export default function SubscriptionsList() {
 
     if(loading) return <Loading />;
     if(error) return <ErrorMessage message={error} onRetry={load} />;
+
     if (items.length === 0) return <>No subscriptions found.</>;
 
     return (

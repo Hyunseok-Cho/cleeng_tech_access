@@ -5,13 +5,14 @@ const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 type FetchOptions = {
     delayMs?: number;
-    fail?: boolean;
+    fail?: boolean; // True = Error
+    empty?: boolean; // True = Empty array
 }
 
 export async function fetchSubscriptions(
     options: FetchOptions = {}
 ): Promise<Subscription[]> {
-    const { delayMs = 1000, fail = false } = options; // Error simulation 'fail = true'
+    const { delayMs = 1000, fail = false, empty = false } = options; // Error simulation 'fail = true'
     // Simulate Network Delay (1 sec)
     await sleep(delayMs);
 
@@ -19,6 +20,8 @@ export async function fetchSubscriptions(
         throw new Error('Network Error');
     }
 
+    const src = empty ? [] : mockSubscriptions;
+
     // Without Real backend, Return Mock Data
-    return mockSubscriptions.map((s) => ({...s}));
+    return src.map((s) => ({...s}));
 }

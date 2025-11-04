@@ -26,7 +26,7 @@ function formatDate(iso: string) {
 }
 
 export default function SubscriptionCard({ subscription, onCancel }: Props) {
-    const { offerTitle, status, price, currency, nextPaymentDate } = subscription;
+    const { id, offerTitle, status, price, currency, nextPaymentDate } = subscription;
     const isCancelled = status === 'cancelled';
 
     return(
