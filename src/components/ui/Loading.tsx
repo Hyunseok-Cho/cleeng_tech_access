@@ -1,5 +1,9 @@
 export default function Loading() {
     return(
-        <div>Loading...</div>
+        <div
+            role="status"
+            aria-live="polite">
+            Loading...
+        </div>
     );
 }

@@ -2,6 +2,8 @@ import {useEffect, useState} from 'react';
 
 import type {Subscription} from '@/lib/types';
 import {fetchSubscriptions} from '@/api/subscriptions';
+import { validateSubscriptions } from '@/lib/validation';
+
 import Loading from '@/components/ui/Loading';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import SubscriptionCard from '@/components/SubscriptionCard';
@@ -15,6 +17,7 @@ export default function SubscriptionsList() {
     const DEV = {
         FAIL: false,
         EMPTY: false,
+        BAD: false,
     }
 
     async function load() {
@@ -25,8 +28,11 @@ export default function SubscriptionsList() {
             const data = await fetchSubscriptions({
                 fail: DEV.FAIL,
                 empty: DEV.EMPTY,
+                bad: DEV.BAD,
             });
-            setItems(data);
+
+            const validData = validateSubscriptions(data);
+            setItems(validData);
         } catch(e) {
             setError(e instanceof Error ? e.message : 'Failed to load subscriptions.');
         } finally {
@@ -45,9 +51,9 @@ export default function SubscriptionsList() {
     }
 
     if(loading) return <Loading />;
-    if(error) return <ErrorMessage message={error} onRetry={load} />;
+    if(error) return <ErrorMessage message={error} onRetry={load} autoFocusRetry/>;
 
-    if (items.length === 0) return <>No subscriptions found.</>;
+    if (items.length === 0) return <div>No subscriptions found.</div>;
 
     return (
         <section>

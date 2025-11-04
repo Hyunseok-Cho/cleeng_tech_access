@@ -31,6 +31,7 @@ src/
     mock-data.ts            # Mock Data(Three Items)
   lib/
     types.ts                # Subscription/Status Type
+    validation.ts           # Validating the data template/Type
   pages/
     Home.tsx                # Main Page
   styles/
@@ -91,8 +92,7 @@ const DEV = {
 * Empty items: 'EMPTY=true' -> “No subscriptions found.” Message
 
 ## A11y
-* (Plan)
-* Notification for Status changing: aria-live="polite" to notice the changing
+* Notification for Status changing on the Screen Reader.
 * Able to Controlling or not: Disabling the button and labling Cancelled
 * Keyboard Controlling
 
